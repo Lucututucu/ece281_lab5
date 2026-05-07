@@ -39,7 +39,34 @@ end controller_fsm;
 
 architecture FSM of controller_fsm is
 
-begin
+	signal f_state: std_logic_vector(1 downto 0) := "00";
+	signal f_state_next: std_logic_vector(1 downto 0) := "00";
+	
+begin	
+	
+	-- PROCESSES ----------------------------------------
+	twoBitCounter_proc : process(i_adv, i_reset)
+	begin
+		if i_reset = '1' then
+			f_state <= "00";
+		elsif rising_edge(i_adv) then
+		    f_state <= f_state_next;
+		end if;
+	end process twoBitCounter_proc;
+	-----------------------------------------------------
+	
 
+	-- CONCURRENT STATEMENTS ----------------------------
+	
+	o_cycle <= "0001" when f_state = "00" else
+			  "0010" when f_state = "01" else
+			  "0100" when f_state = "10" else
+			  "1000";
+
+    
+    f_state_next <= "01" when f_state = "00" else
+                    "10" when f_state = "01" else
+                    "11" when f_state = "10" else
+                    "00";
 
 end FSM;
